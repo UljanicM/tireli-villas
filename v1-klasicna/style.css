@@ -1,0 +1,556 @@
+/* V1 Klasična — closest to the reference sketch: paper ground, one serif,
+   bronze connector lines, soft cards, chips on the spokes. */
+
+:root {
+  --ground: #efefec;
+  --surface: #fafaf9;
+  --ink: #1e2b2e;
+  --muted: #59625f;
+  --line: #9a7a66;
+  --ph: #dfdeda;
+
+  --serif: "Libre Caslon Text", Georgia, "Times New Roman", serif;
+
+  --R: clamp(118px, 11vw, 158px);
+  --gutter: clamp(16px, 2.4vw, 32px);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-soft: cubic-bezier(0.33, 1, 0.68, 1);
+  --t-press: 140ms;
+  --t-hover: 240ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 17px;
+  line-height: 1.55;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; }
+img { display: block; max-width: 100%; }
+h1, h2, p { margin: 0; }
+
+:focus-visible { outline: 2px solid var(--line); outline-offset: 4px; }
+
+/* Background dots (dots.js), behind everything. */
+.dots {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap;
+}
+
+/* ---------- Header: name centred, tagline under it ----------
+   Two layouts to compare, chosen with ?header=a|c:
+   a  name + tagline centred, nothing else
+   c  larger name, place on the left */
+
+.top {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 22px var(--gutter) 12px;
+}
+
+.top-place {
+  justify-self: start;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.brand {
+  grid-column: 2;
+  display: grid;
+  justify-items: center;
+  gap: 2px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.wordmark {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.top-note { font-style: italic; color: var(--muted); }
+
+[data-header="a"] .top-place { visibility: hidden; }
+[data-header="c"] .wordmark { font-size: clamp(30px, 3vw, 44px); letter-spacing: 0.08em; }
+[data-header="c"] .top-note { font-size: 18px; }
+
+/* ---------- Stage: the circle sits in the middle of the four villas ---------- */
+
+.stage {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr) minmax(0, 1fr);
+  grid-template-areas:
+    "viktor hub nicol"
+    ".      hub ."
+    "avang  hub origami";
+  /* The empty middle row keeps room between the villas for the language
+     switch and Novosti on the left and Na prodaju on the right. */
+  grid-template-rows: auto 120px auto;
+  column-gap: clamp(32px, 4vw, 64px);
+  row-gap: 24px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 12px var(--gutter) 40px;
+}
+
+.wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.wires line {
+  stroke: var(--line);
+  stroke-width: 1.25;
+  fill: none;
+  transition: stroke var(--t-hover) ease, stroke-width var(--t-hover) ease;
+}
+.wires line.is-active { stroke: var(--ink); stroke-width: 2; }
+.stage:has(.ring:hover) .wires line { stroke: var(--ink); }
+
+/* ---------- Hub: circle, menu spokes, language switch ---------- */
+
+.hub {
+  grid-area: hub;
+  position: relative;
+  min-height: calc(2 * var(--R) + 250px);
+}
+
+.ring {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: calc(2 * var(--R));
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1.5px solid var(--line);
+  background: var(--ground);
+  display: grid;
+  place-items: center;
+  z-index: 1;
+}
+
+.logo {
+  width: 74%;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+.logo img { width: 100%; height: 100%; object-fit: contain; }
+.logo-fallback { display: none; }
+.logo.is-empty .logo-fallback {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  text-align: center;
+}
+
+.mark {
+  width: 46%;
+  fill: none;
+  stroke: var(--line);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transform-origin: 40% 41%;
+  animation: turn 180s linear infinite;
+}
+
+.logo-name {
+  margin-top: 8px;
+  font-size: calc(var(--R) * 0.15);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.logo-since {
+  font-size: calc(var(--R) * 0.09);
+  letter-spacing: 0.4em;
+  color: var(--muted);
+}
+
+@keyframes turn { to { transform: rotate(360deg); } }
+
+/* The label layer covers the hub, so it lets the pointer through to the circle. */
+.spokes { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+
+.spoke,
+.lang {
+  padding: 7px 16px;
+  border-radius: 999px;
+  background: var(--surface);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.spoke {
+  position: absolute;
+  left: calc(50% + (var(--R) + var(--d)) * cos(var(--a)));
+  top: calc(50% + (var(--R) + var(--d)) * sin(var(--a)));
+  translate: -50% -50%;
+  text-decoration: none;
+  pointer-events: auto;
+}
+a.spoke:hover { color: var(--line); }
+a.spoke[aria-current="page"] { background: var(--ink); color: var(--surface); }
+
+/* Language switch: left of the circle, between the two left villas,
+   touching the circle (data-gap="0"). */
+.lang { z-index: 3; display: flex; gap: 8px; }
+.lang a { text-decoration: none; transition: color var(--t-hover) ease; }
+.lang a:hover { color: var(--line); }
+.lang a[aria-current="true"] { text-decoration: underline; text-underline-offset: 4px; }
+.lang span { color: var(--line); }
+
+/* ---------- Cards ---------- */
+
+.card {
+  position: relative;
+  z-index: 2;
+  display: block;
+  text-decoration: none;
+}
+.card,
+.lightbox-card {
+  padding: 18px;
+  border-radius: 16px;
+  background: var(--surface);
+}
+.villa { cursor: zoom-in; }
+
+.card h2,
+.lightbox-card h2 {
+  font-size: clamp(18px, 1.45vw, 22px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+.villa h2 { margin-bottom: 14px; }
+
+.photo {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--ph);
+}
+.photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 900ms var(--ease-soft);
+}
+.photo figcaption { display: none; }
+.photo.is-empty figcaption {
+  display: block;
+  position: absolute;
+  left: 14px;
+  bottom: 10px;
+  font-size: 14px;
+  font-style: italic;
+  color: var(--muted);
+}
+.villa:hover .photo img, .villa:focus-visible .photo img { transform: scale(1.04); }
+
+
+/* Instagram hangs a short, fixed line (90px) under the circle: it is
+   centred on the circle, then moved down by R + 90px + half its height. */
+.insta {
+  grid-row: 1 / 4;
+  grid-column: 2;
+  align-self: center;
+  justify-self: center;
+  height: 56px;
+  translate: 0 calc(var(--R) + 90px + 28px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px 14px 18px;
+  font-size: 18px;
+}
+.insta img { width: 28px; height: 28px; }
+
+/* ---------- Villa photo viewer ---------- */
+
+.lightbox { position: fixed; inset: 0; z-index: 50; }
+.lightbox[hidden] { display: none; }
+.lightbox-scrim { position: absolute; inset: 0; background: rgba(30, 43, 46, 0.8); }
+.lightbox-card {
+  position: fixed;
+  margin: 0;
+  transform-origin: center;
+  cursor: zoom-out;
+}
+.lightbox:focus { outline: none; }
+.lightbox-scrim { cursor: zoom-out; }
+.is-viewing body { overflow: hidden; }
+
+/* Section panel: grows out of the clicked button. lightbox.js animates its
+   box; the body is laid out at the final size from the start and stays
+   centred, so the text never reflows while the panel grows. */
+.panel {
+  position: fixed;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--surface);
+}
+/* A copy of the button's text on its way into the panel (see lightbox.js). */
+.panel-travel {
+  position: fixed;
+  margin: 0;
+  pointer-events: none;
+}
+.panel-body {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 44px 48px 40px;
+}
+.panel h2 {
+  font-size: clamp(24px, 2.6vw, 32px);
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.15;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+.panel-lead { margin-top: 14px; color: var(--muted); }
+
+.panel-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 10px;
+  margin: 26px 0 0;
+}
+.panel-stats div { padding: 14px 16px; border-radius: 12px; background: var(--ground); }
+.panel-stats dt { font-size: 28px; font-weight: 700; line-height: 1.1; }
+.panel-stats dd { margin: 4px 0 0; font-size: 14px; line-height: 1.3; color: var(--muted); }
+
+.panel-rows { list-style: none; margin: 26px 0 0; padding: 0; }
+.panel-rows li {
+  display: grid;
+  grid-template-columns: minmax(0, 11em) minmax(0, 1fr);
+  gap: 4px 24px;
+  padding: 13px 0;
+  border-top: 1px solid color-mix(in srgb, var(--line) 35%, transparent);
+}
+.panel-rows li:last-child { border-bottom: 1px solid color-mix(in srgb, var(--line) 35%, transparent); }
+.panel-rows .k {
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  line-height: 1.5;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 2px;
+}
+
+.panel-cta {
+  display: inline-block;
+  margin-top: 28px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--surface);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  transition: transform var(--t-press) var(--ease-out), background-color var(--t-hover) ease;
+}
+.panel-cta:hover { background: #2c3d41; }
+.panel-cta:active { transform: scale(0.96); }
+
+@media (max-width: 560px) {
+  .panel-body { padding: 32px 24px 28px; }
+  .panel-rows li { grid-template-columns: minmax(0, 1fr); }
+}
+
+/* ---------- Motion ---------- */
+
+/* Entrance, only when the script runs. script.js sets each node's --delay:
+   villa cards together, everything else one by one, clockwise. */
+.js .ring { opacity: 0; transform: scale(0.94); }
+.js [data-node] { opacity: 0; transform: translateY(18px); }
+.js .wires line { stroke-dasharray: 1; stroke-dashoffset: 1; }
+
+.ready .ring {
+  opacity: 1;
+  transform: none;
+  transition: opacity 800ms var(--ease-out), transform 1000ms var(--ease-out);
+}
+.ready .wires line {
+  stroke-dashoffset: 0;
+  transition:
+    stroke-dashoffset 600ms var(--ease-out) var(--delay, 0ms),
+    stroke var(--t-hover) ease,
+    stroke-width var(--t-hover) ease;
+}
+.ready [data-node] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 700ms var(--ease-out) var(--delay, 0ms),
+    transform 900ms var(--ease-out) var(--delay, 0ms);
+}
+
+/* Hover: everything expands a little. Lines are drawn from the layout, so
+   they stay still; their ends are tucked under the surfaces that grow. */
+.settled .ring { transition: transform 420ms var(--ease-out); }
+.settled [data-node] {
+  transition:
+    opacity 240ms var(--ease-out),
+    transform 320ms var(--ease-out),
+    scale 240ms var(--ease-out),
+    color var(--t-hover) ease;
+}
+.ready .ring:hover { transform: scale(1.05); }
+.ready .card:hover, .ready .card:focus-visible { transform: scale(1.02); }
+.ready a.spoke:hover, .ready a.spoke:focus-visible { scale: 1.06; }
+a.spoke:active { scale: 0.96; }
+
+@media (prefers-reduced-motion: reduce) {
+  .js .ring, .js [data-node] { opacity: 1; transform: none; transition: none; }
+  .js .wires line { stroke-dashoffset: 0; transition: none; }
+  .mark { animation: none; }
+  .photo img { transition: none; }
+  .ready .ring:hover, .ready .card:hover, .ready a.spoke:hover { transform: none; scale: none; }
+}
+
+/* ---------- Desktop: the whole page fits one screen ----------
+   The page takes exactly the window height; the villa photos flex to
+   fill what is left, so nothing else has to shrink. Very short windows
+   fall back to the scrolling layout above. */
+
+@media (min-width: 1100px) and (min-height: 640px) {
+  :root { --R: clamp(104px, min(11vw, 19vh), 158px); }
+
+  body { display: flex; flex-direction: column; height: 100svh; }
+  main { flex: 1; min-height: 0; display: flex; }
+  .stage {
+    flex: 1;
+    min-height: 0;
+    grid-template-rows: minmax(0, 1fr) 120px minmax(0, 1fr);
+  }
+  .hub { min-height: 0; }
+
+  .villa { display: flex; flex-direction: column; min-height: 0; padding: 16px; }
+  .villa .photo { flex: 1; min-height: 0; aspect-ratio: auto; }
+  .villa h2 { margin-bottom: 12px; }
+}
+
+/* ---------- Tablet ---------- */
+
+@media (max-width: 1099px) {
+  .stage {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: none;
+    grid-template-areas:
+      "hub    hub"
+      "viktor nicol"
+      "avang  origami"
+      "insta  insta";
+    row-gap: 32px;
+  }
+  .hub { min-height: calc(2 * var(--R) + 290px); margin-bottom: 24px; }
+  .insta { grid-area: insta; align-self: start; height: auto; translate: none; }
+}
+
+/* ---------- Phone: circle on top, cards hang off one spine ---------- */
+
+@media (max-width: 760px) {
+  :root { --R: 112px; }
+
+  .top {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    gap: 14px;
+    padding: 20px 16px;
+  }
+  .brand { grid-column: 1; }
+  .top-place { display: none; }
+  [data-header="c"] .wordmark { font-size: 30px; }
+
+  .stage {
+    grid-template-columns: 1fr;
+    grid-template-areas: "hub" "viktor" "nicol" "avang" "origami" "insta";
+    row-gap: 24px;
+    padding: 0 16px 80px 44px;
+  }
+  .wires { display: none; }
+
+  .hub {
+    min-height: 0;
+    margin-left: -28px;
+    display: grid;
+    justify-items: center;
+    gap: 24px;
+  }
+  .ring { position: relative; left: auto; top: auto; translate: none; order: 1; }
+  .spokes { order: 3; }
+  .lang {
+    order: 2;
+    position: relative;
+    left: auto;
+    top: auto;
+    translate: none;
+    margin-top: -43px; /* centred on the circle's lower edge, as on desktop */
+  }
+  .spokes {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .spoke { position: static; translate: none; }
+
+  .stage > .card::before,
+  .stage > .card::after {
+    content: "";
+    position: absolute;
+    background: var(--line);
+  }
+  .stage > .card::before { left: -20px; top: -24px; bottom: 0; width: 1.25px; }
+  .stage > .card::after { left: -20px; top: 30px; width: 20px; height: 1.25px; }
+  .stage > .card:last-of-type::before { bottom: calc(100% - 30px); }
+  .insta { justify-self: start; }
+  .insta::after { top: 50%; }
+  .stage > .insta:last-of-type::before { bottom: 50%; }
+}

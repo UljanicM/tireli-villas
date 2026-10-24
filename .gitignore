@@ -1,0 +1,7 @@
+# Only the chosen version (V1 Klasična) and its images are published.
+/*
+!/.gitignore
+!/README.md
+!/v1-klasicna/
+!/images/
+.DS_Store
